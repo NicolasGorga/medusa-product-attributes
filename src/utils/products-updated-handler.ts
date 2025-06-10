@@ -52,12 +52,13 @@ export const productsUpdatedHookHandler = async ({
   }))).flat()
 
   const { data } = await query.graph({
-    entity: 'attribute_value',
-    fields: ['id'],
+    entity: attributeValueProduct.entryPoint,
+    fields: ['attribute_value_id'],
     filters: {
-      id: {
+      attribute_value_id: {
         $nin: updatedValueIds
-      }
+      },
+      product_id: productIds
     }
   })
 
@@ -66,6 +67,6 @@ export const productsUpdatedHookHandler = async ({
   }
   
   await deleteAttributeValueWorkflow(container).run({
-    input: data.map(val => val.id)
+    input: data.map(val => val.attribute_value_id)
   })
 }; 

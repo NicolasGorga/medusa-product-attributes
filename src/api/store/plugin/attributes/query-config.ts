@@ -4,7 +4,7 @@ export const storeDefaultAttributeFields = [
     'description',
     'handle',
     'metadata',
-    '*values',
+    '*possible_values',
 ]
 
 export const retrieveStoreAttributesQueryConfig = {
