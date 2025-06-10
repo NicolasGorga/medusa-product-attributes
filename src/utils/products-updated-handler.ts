@@ -28,16 +28,18 @@ export const productsUpdatedHookHandler = async ({
   const updatedValueIds = (await Promise.all(productIds.map(async prodId => {
     const { data: productValues } = await query.graph({
       entity: attributeValueProduct.entryPoint,
-      fields: ['attribute_value.id', 'attribute_value.value'],
+      fields: ['attribute_value.id', 'attribute_value.value', 'attribute_value.attribute_id'],
       filters: {
         product_id: prodId
       }
     })
 
     return Promise.all(attributeValues.map(async attrVal => {
-      const existentProductValue = productValues.find(prodVal => prodVal.attribute_value.value === attrVal.value)
-      if (existentProductValue) {
-        return existentProductValue.attribute_value.id as string
+      const unchangedProductValue = productValues.find(prodVal => 
+        prodVal.attribute_value.value === attrVal.value && prodVal.attribute_value.attribute_id === attrVal.attribute_id
+      )
+      if (unchangedProductValue) {
+        return unchangedProductValue.attribute_value.id as string
       }
 
       const { result } = await createAttributeValueWorkflow(container).run({
@@ -51,7 +53,7 @@ export const productsUpdatedHookHandler = async ({
     }))
   }))).flat()
 
-  const { data } = await query.graph({
+  const { data: attributeValuesToDelete } = await query.graph({
     entity: attributeValueProduct.entryPoint,
     fields: ['attribute_value_id'],
     filters: {
@@ -62,11 +64,11 @@ export const productsUpdatedHookHandler = async ({
     }
   })
 
-  if (!data.length) {
+  if (!attributeValuesToDelete.length) {
     return;
   }
   
   await deleteAttributeValueWorkflow(container).run({
-    input: data.map(val => val.attribute_value_id)
+    input: attributeValuesToDelete.map(val => val.attribute_value_id)
   })
 }; 
