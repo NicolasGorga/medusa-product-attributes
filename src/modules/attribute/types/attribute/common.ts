@@ -81,10 +81,5 @@ export interface UpdateAttributeValueDTO {
     /**
      * Holds custom data in key-value pairs.
      */
-    metadata?: Record<string, unknown>
-
-    /**
-     * The id of the associated attribute.
-     */
-    atribute_id?: string
+    metadata?: Record<string, unknown> | null
 }

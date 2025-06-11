@@ -25,6 +25,7 @@ export const defaultAdminAttributeValueFields = [
     'id',
     'value',
     'rank',
+    'metadata',
 ]
 
 export const retrieveAttributeValueQueryConfig = {
