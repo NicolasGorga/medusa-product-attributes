@@ -1,8 +1,11 @@
-import { Container, Heading, Text, DataTable, createDataTableColumnHelper, DataTablePaginationState, Badge } from "@medusajs/ui"
+import { Container, Heading, Text, DataTable, createDataTableColumnHelper, DataTablePaginationState, Badge, DropdownMenu, Button } from "@medusajs/ui"
 import { useState } from "react"
 import { useDataTable } from "@medusajs/ui"
 import { format } from "date-fns"
 import { Attribute } from "../../../../types/attribute/http/attribute"
+import { EllipsisHorizontal } from "@medusajs/icons"
+import { useNavigate, useParams } from "react-router-dom"
+import { toast } from "@medusajs/ui"
 
 type PossibleValue = { id: string; value: string; rank: number; created_at: string }
 
@@ -20,6 +23,9 @@ export const PossibleValuesTable = ({ attribute, isLoading }: PossibleValuesTabl
   })
   const [possibleValuesSearch, setPossibleValuesSearch] = useState("")
 
+  const navigate = useNavigate()
+  const { id: attributeId } = useParams()
+
   const possibleValuesColumnHelper = createDataTableColumnHelper<PossibleValue>()
 
   const possibleValuesColumns = [
@@ -34,6 +40,37 @@ export const PossibleValuesTable = ({ attribute, isLoading }: PossibleValuesTabl
     possibleValuesColumnHelper.accessor("created_at", {
       header: "Created At",
       cell: (info) => format(new Date(info.getValue()), "MMM dd, yyyy p"),
+    }),
+    possibleValuesColumnHelper.display({
+      id: "actions",
+      cell: (info) => {
+        const possibleValue = info.row.original
+        return (
+          <div className="flex items-center justify-end">
+            <DropdownMenu>
+              <DropdownMenu.Trigger asChild>
+                <Button variant="transparent" size="small">
+                  <EllipsisHorizontal />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end">
+                <DropdownMenu.Item
+                  onClick={() => {
+                    if (attributeId) {
+                      navigate(`/attributes/${attributeId}/edit-possible-value?possible_value_id=${possibleValue.id}`)
+                    } else {
+                      toast.error("Attribute ID not found.")
+                    }
+                  }}
+                >
+                  Edit
+                </DropdownMenu.Item>
+                <DropdownMenu.Item onClick={() => toast.error("Delete clicked!")}>Delete</DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu>
+          </div>
+        )
+      },
     }),
   ]
 
