@@ -5,8 +5,10 @@ import { useQuery } from "@tanstack/react-query"
 import { medusaClient } from "../../lib/config"
 import { Attribute, AttributesResponse } from "../../../types/attribute/http/attribute"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const AttributesPage = () => {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const pageSize = 10
 
@@ -83,6 +85,9 @@ const AttributesPage = () => {
     search: {
       state: search,
       onSearchChange: setSearch,
+    },
+    onRowClick: (_event, row: Attribute) => {
+      navigate(`/attributes/${row.id}`)
     },
   })
 
