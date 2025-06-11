@@ -21,6 +21,7 @@ export interface Attribute {
     value: string
     rank: number
     created_at: string
+    metadata: Record<string, unknown> | null
   }>
   values?: Array<{
     id: string
