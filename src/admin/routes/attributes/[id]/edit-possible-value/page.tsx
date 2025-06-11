@@ -17,8 +17,8 @@ const formSchema = z.object({
     z.number().min(0, "Rank must be non-negative").optional()
   ),
   metadata: z.array(z.object({
-    key: z.string().min(1, "Key is required"),
-    value: z.string().min(1, "Value is required"),
+    key: z.string(),
+    value: z.string(),
   })).default([]),
 })
 
@@ -67,30 +67,40 @@ const EditPossibleValuePage = () => {
     }
   }, [possibleValue, form])
 
-  const handleSave = form.handleSubmit((data) => {
+  const handleSave = form.handleSubmit(async (data) => {
     const transformedMetadata = data.metadata.reduce((acc, item) => {
-      // Only include valid key-value pairs
-      if (item.key.trim() !== "") {
+      // Only include valid key-value pairs where both key and value are non-empty
+      if (item.key.trim() !== "" && item.value.trim() !== "") {
         acc[item.key] = item.value
       }
       return acc
     }, {} as Record<string, unknown>)
 
-    console.log({ ...data, metadata: transformedMetadata })
-    toast.success("Possible value updated!")
-    navigate(-1)
+    try {
+      await medusaClient.client.fetch(`/admin/plugin/attributes/${attributeId}/values/${possibleValueId}`, {
+        method: "POST",
+        body: {
+          id: possibleValueId,
+          value: data.value,
+          rank: data.rank,
+          metadata: Object.keys(transformedMetadata).length > 0 ? transformedMetadata : null
+        }
+      })
+      
+      toast.success("Possible value updated!")
+      navigate(-1)
+    } catch (error) {
+      toast.error("Failed to update possible value")
+      console.error(error)
+    }
   })
 
   const handleClose = () => {
-    navigate(-1)
+    navigate(`/attributes/${attributeId}`)
   }
 
   return (
     <Drawer open={true} onOpenChange={(open) => { if (!open) handleClose() }}>
-      <Drawer.Trigger asChild>
-        {/* This button serves as a trigger for the drawer when it's rendered as a standalone page */}
-        <Button variant="secondary">Open Edit Drawer</Button>
-      </Drawer.Trigger>
       <Drawer.Content>
         {isAttributeLoading ? (
           <>
@@ -218,7 +228,7 @@ const EditPossibleValuePage = () => {
 }
 
 export const config = defineRouteConfig({
-  // This page is expected to be mounted as a modal route, so no modal: true needed here
+
 })
 
 export default EditPossibleValuePage 

@@ -57,7 +57,7 @@ export const PossibleValuesTable = ({ attribute, isLoading }: PossibleValuesTabl
                 <DropdownMenu.Item
                   onClick={() => {
                     if (attributeId) {
-                      navigate(`/attributes/${attributeId}/edit-possible-value?possible_value_id=${possibleValue.id}`)
+                      navigate(`edit-possible-value?possible_value_id=${possibleValue.id}`)
                     } else {
                       toast.error("Attribute ID not found.")
                     }
