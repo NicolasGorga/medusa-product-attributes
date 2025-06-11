@@ -1,4 +1,4 @@
-import { Text, Badge } from "@medusajs/ui"
+import { Text, Badge, IconButton } from "@medusajs/ui"
 import { AdminProductCategory } from "@medusajs/types"
 import React, { useState, useRef, useEffect } from "react"
 import { TrianglesMini, XMarkMini, ChevronRightMini, ChevronLeftMini } from "@medusajs/icons"
@@ -20,7 +20,7 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
   const [currentParentId, setCurrentParentId] = useState<string | null>(null)
-  const [pathHistory, setPathHistory] = useState<string[]>([])
+  const [pathHistory, setPathHistory] = useState<(string | null)[]>([])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -49,21 +49,15 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
 
   const handleDrillDown = (category: AdminProductCategory, event: React.MouseEvent) => {
     event.stopPropagation() // Prevent selection when drilling down
-    if (category.id) {
-      if (currentParentId !== null) {
-        setPathHistory([...pathHistory, currentParentId])
-      } else {
-        setPathHistory([])
-      }
-      setCurrentParentId(category.id)
-    }
+    setPathHistory([...pathHistory, currentParentId])
+    setCurrentParentId(category.id)
   }
 
   const handleGoBack = () => {
     const newPathHistory = [...pathHistory]
-    const prevParentId = newPathHistory.pop()
+    const previousParentId = newPathHistory.pop()
     setPathHistory(newPathHistory)
-    setCurrentParentId(prevParentId || null)
+    setCurrentParentId(previousParentId || null)
   }
 
   const handleItemClick = (categoryId: string) => {
@@ -76,6 +70,11 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
   }
 
   const currentCategories = categories.filter(cat => cat.parent_category_id === currentParentId)
+
+  const getBackButtonText = (): string => {
+    const parentCategory = categories.find(cat => cat.id === currentParentId);
+    return parentCategory?.name || "";
+  }
 
   return (
     <div className="relative">
@@ -93,7 +92,6 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
                   <XMarkMini></XMarkMini>
                 </Badge>
               </button>
-              <Text>Selected</Text>
             </>
           ) : (
             <Text className="text-ui-fg-subtle">Select categories</Text>
@@ -111,11 +109,11 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
         >
           {currentParentId !== null && (
             <div
-              className="flex cursor-pointer items-center gap-2 px-3 py-2 text-ui-fg-base hover:bg-ui-bg-base-hover border-b border-ui-border-base"
+              className="flex cursor-pointer items-center gap-2 px-3 py-2 text-ui-fg-subtle hover:bg-ui-bg-base-hover border-b border-ui-border-base"
               onClick={handleGoBack}
             >
               <ChevronLeftMini />
-              <Text>Back</Text>
+              <Text>{getBackButtonText()}</Text>
             </div>
           )}
           {currentCategories.length === 0 ? (
@@ -127,13 +125,15 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
               return (
                 <div
                   key={category.id}
-                  className="flex cursor-pointer items-center justify-between px-3 py-2 text-ui-fg-base hover:bg-ui-bg-base-hover"
+                  className={`flex cursor-pointer items-center justify-between px-1 py-1`}
                   onClick={() => handleItemClick(category.id)}
                 >
-                  <Text>{category.name}</Text>
-                  {isSelected && (<span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2" />)}
+                  <div className="flex items-center hover:bg-ui-bg-base-hover flex-1 px-2 mr-2 py-1.5 rounded-md">
+                    {isSelected && (<span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3" />)}
+                    <Text>{category.name}</Text>
+                  </div>
                   {hasChildrenNode && (
-                    <div onClick={(e) => handleDrillDown(category, e)} className="ml-auto p-1 hover:bg-ui-bg-subtle rounded-md">
+                    <div onClick={(e) => handleDrillDown(category, e)} className="p-1.5 rounded-md hover:bg-ui-bg-subtle-hover">
                       <ChevronRightMini />
                     </div>
                   )}
