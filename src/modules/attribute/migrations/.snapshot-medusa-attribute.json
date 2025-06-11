@@ -75,7 +75,7 @@
             "multivalue",
             "unit",
             "toggle",
-            "text-area",
+            "text_area",
             "color_picker"
           ],
           "mappedType": "enum"

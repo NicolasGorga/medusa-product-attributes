@@ -5,7 +5,7 @@ export enum AttributeUIComponent {
     MULTIVALUE = 'multivalue',
     UNIT = 'unit', // cantimeters, grams etc which are represented in scale table
     TOGGLE = 'toggle',
-    TEXTAREA = 'text-area',
+    TEXTAREA = 'text_area',
     COLOR_PICKER = 'color_picker'
 }
 
