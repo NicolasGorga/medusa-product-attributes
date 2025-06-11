@@ -5,6 +5,7 @@ export const defaultAdminAttributeFields = [
     'is_variant_defining',
     'is_filterable',
     'handle',
+    'ui_component',
     'metadata',
     '*possible_values',
     '*product_categories'

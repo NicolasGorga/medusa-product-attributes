@@ -1,11 +1,4 @@
-export enum AttributeUIComponent {
-  TYPEAHEAD = 'typeahead',
-  MULTIVALUE = 'multivalue',
-  UNIT = 'unit',
-  TOGGLE = 'toggle',
-  TEXTAREA = 'text-area',
-  COLOR_PICKER = 'color_picker'
-}
+import { AttributeUIComponent } from '../../../../modules/attribute/types'
 
 export interface Attribute {
   id: string

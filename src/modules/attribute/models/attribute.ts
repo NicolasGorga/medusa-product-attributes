@@ -1,16 +1,8 @@
+import { AttributeUIComponent } from "../types"
 import AttributePossibleValue from "./attribute-possible-value"
 import AttributeSet from "./attribute-set"
 import AttributeValue from "./attribute-value"
 import { model } from "@medusajs/framework/utils"
-
-enum AttributeUIComponent {
-    SELECT = 'select', // ui component with list of values which are represented in possible value table
-    MULTIVALUE = 'multivalue',
-    UNIT = 'unit', // cantimeters, grams etc which are represented in scale table
-    TOGGLE = 'toggle',
-    TEXTAREA = 'text-area',
-    COLOR_PICKER = 'color_picker'
-}
 
 const Attribute = model.define('attribute', {
     id: model.id({ prefix: 'attr' }).primaryKey(),

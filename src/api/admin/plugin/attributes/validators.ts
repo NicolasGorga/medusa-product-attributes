@@ -1,6 +1,7 @@
-import { createFindParams, createSelectParams } from '@medusajs/medusa/api/utils/validators'
+import { createFindParams, createSelectParams, WithAdditionalData } from '@medusajs/medusa/api/utils/validators'
 
 import { z } from 'zod'
+import { AttributeUIComponent } from '../../../../modules/attribute/types'
 
 export type AdminCreateAttributeValueType = z.infer<typeof AdminCreateAttributeValue>
 export const AdminCreateAttributeValue = z.object({
@@ -23,10 +24,11 @@ export const AdminGetAttributeValueParams = createSelectParams()
 export type AdminGetAttributeValuesParamsType = z.infer<typeof AdminGetAttributeValueParams>
 export const AdminGetAttributeValuesParams = createFindParams()
 
-export type AdminCreateAttributeType = z.infer<typeof AdminCreateAttribute>
-export const AdminCreateAttribute = z.object({
+export type AdminCreateAttributeType = z.infer<typeof CreateAttribute>
+export const CreateAttribute = z.object({
     name: z.string(),
     description: z.string().optional(),
+    ui_component: z.nativeEnum(AttributeUIComponent).default(AttributeUIComponent.SELECT),
     is_variant_defining: z.boolean().default(true),
     is_filterable: z.boolean().default(true),
     handle: z.string().optional(),
@@ -34,6 +36,19 @@ export const AdminCreateAttribute = z.object({
     possible_values: z.array(AdminCreateAttributeValue).optional(),
     product_category_ids: z.array(z.string()).optional()
 })
+
+export const AdminCreateAttribute = WithAdditionalData(
+    CreateAttribute,
+    (schema) => {
+      return schema.refine(
+        (data) => data.ui_component !== AttributeUIComponent.SELECT || (data.possible_values && data.possible_values.length > 0),
+        {
+            message: "Possible values are required when ui_component is SELECT",
+            path: ["possible_values"]
+        }
+    )
+    }
+  )
 
 export type AdminGetAttributeParamsType = z.infer<typeof AdminGetAttributeParams>
 export const AdminGetAttributeParams = createSelectParams()

@@ -1,5 +1,14 @@
 import { AdminCreateAttributeType } from "../../../../api/admin/plugin/attributes/validators"
 
+export enum AttributeUIComponent {
+    SELECT = 'select', // ui component with list of values which are represented in possible value table
+    MULTIVALUE = 'multivalue',
+    UNIT = 'unit', // cantimeters, grams etc which are represented in scale table
+    TOGGLE = 'toggle',
+    TEXTAREA = 'text-area',
+    COLOR_PICKER = 'color_picker'
+}
+
 export type CreateAttributesWorkflowInput = {
     attributes: AdminCreateAttributeType[]
 }
