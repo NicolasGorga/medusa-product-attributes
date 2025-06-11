@@ -4,7 +4,7 @@ import AttributeValue from "./attribute-value"
 import { model } from "@medusajs/framework/utils"
 
 enum AttributeUIComponent {
-    TYPEAHEAD = 'typeahead', // ui component with custom text but suggested values which are represented in possible value table
+    SELECT = 'select', // ui component with list of values which are represented in possible value table
     MULTIVALUE = 'multivalue',
     UNIT = 'unit', // cantimeters, grams etc which are represented in scale table
     TOGGLE = 'toggle',
@@ -19,7 +19,7 @@ const Attribute = model.define('attribute', {
     is_variant_defining: model.boolean().default(true),
     is_filterable: model.boolean().default(true),
     handle: model.text().unique(),
-    ui_component: model.enum(Object.values(AttributeUIComponent)),
+    ui_component: model.enum(Object.values(AttributeUIComponent)).default(AttributeUIComponent.SELECT),
     metadata: model.json().nullable(),
     possible_values: model.hasMany(() => AttributePossibleValue),
     values: model.hasMany(() => AttributeValue),
