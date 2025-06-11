@@ -19,6 +19,8 @@ export interface Attribute {
   possible_values?: Array<{
     id: string
     value: string
+    rank: number
+    created_at: string
   }>
   values?: Array<{
     id: string
