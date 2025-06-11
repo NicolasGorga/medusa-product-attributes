@@ -7,14 +7,44 @@ import { z } from "zod"
 import { medusaClient } from "../../../lib/config"
 import { AttributeUIComponent } from "../../../../modules/attribute/types"
 import { CreateAttribute } from "../../../../api/admin/plugin/attributes/validators"
+import { useEffect, useState } from "react"
+import { AdminProductCategory } from "@medusajs/types"
+import MultiSelectCategory from "./components/MultiSelectCategory"
 
-type FormValues = z.infer<typeof CreateAttribute> & { is_global: boolean }
+const FormSchema = CreateAttribute.extend({
+  is_global: z.boolean(),
+})
+
+type FormValues = z.infer<typeof FormSchema>
 
 const CreateAttributePage = () => {
   const navigate = useNavigate()
+  const [categories, setCategories] = useState<AdminProductCategory[]>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await medusaClient.admin.productCategory.list()
+        setCategories(response.product_categories)
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+      }
+    }
+    fetchCategories()
+  }, [])
+
+  const getCategoryPath = (category: AdminProductCategory): string => {
+    const path: string[] = [category.name]
+    let current: AdminProductCategory = category
+    while (current.parent_category) {
+      current = current.parent_category
+      path.unshift(current.name)
+    }
+    return path.join(" > ")
+  }
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(CreateAttribute.merge(z.object({ is_gloabl: z.boolean() }))),
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -24,14 +54,16 @@ const CreateAttributePage = () => {
       is_global: true,
       possible_values: [],
       product_category_ids: [],
+      metadata: null
     },
   })
 
   const handleSave = form.handleSubmit(async (data) => {
     try {
+      const { is_global, ...payload } = data
       await medusaClient.client.fetch("/admin/plugin/attributes", {
         method: "POST",
-        body: data,
+        body: payload,
       })
       
       toast.success("Attribute created!")
@@ -145,6 +177,23 @@ const CreateAttributePage = () => {
                     <Label htmlFor="is_global">Global</Label>
                   </div>
                 </div>
+
+                {!form.watch("is_global") && (
+                  <div>
+                    <Label htmlFor="product_categories">Product Categories</Label>
+                    <MultiSelectCategory
+                      categories={categories}
+                      value={form.watch("product_category_ids") || []}
+                      onChange={(value) => form.setValue("product_category_ids", value)}
+                      getCategoryPath={getCategoryPath}
+                    />
+                    {form.formState.errors.product_category_ids && (
+                      <Text className="text-red-500 text-sm mt-1">
+                        {form.formState.errors.product_category_ids.message}
+                      </Text>
+                    )}
+                  </div>
+                )}
               </div>
             </form>
           </div>

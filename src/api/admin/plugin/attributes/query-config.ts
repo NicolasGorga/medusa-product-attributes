@@ -8,7 +8,8 @@ export const defaultAdminAttributeFields = [
     'ui_component',
     'metadata',
     '*possible_values',
-    '*product_categories'
+    'product_categories.id',
+    'product_categories.name',
 ]
 
 export const retrieveAttributeQueryConfig = {

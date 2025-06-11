@@ -1,7 +1,7 @@
 import { ContainerRegistrationKeys, MedusaError, MedusaErrorTypes } from "@medusajs/framework/utils";
 import { MedusaRequest, MedusaResponse, refetchEntity } from "@medusajs/framework";
 
-import { AdminGetAttributeValueParamsType, AdminPostAttributeValueReqSchema, AdminUpdateAttributeValueType } from "../../../validators";
+import { AdminGetAttributeValueParamsType, AdminUpdateAttributeValueType } from "../../../validators";
 import { updateAttributePossibleValueWorkflow } from "../../../../../../../workflows/attribute_possible_value";
 
 export const GET = async (req: MedusaRequest<AdminGetAttributeValueParamsType>, res: MedusaResponse) => {
