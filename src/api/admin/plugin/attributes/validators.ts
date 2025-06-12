@@ -26,7 +26,7 @@ export const AdminGetAttributeValuesParams = createFindParams()
 
 export type AdminCreateAttributeType = z.infer<typeof CreateAttribute>
 export const CreateAttribute = z.object({
-    name: z.string(),
+    name: z.string().min(1),
     description: z.string().optional(),
     ui_component: z.nativeEnum(AttributeUIComponent).default(AttributeUIComponent.SELECT),
     is_variant_defining: z.boolean().default(true),

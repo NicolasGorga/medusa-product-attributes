@@ -1,20 +1,18 @@
 import { Text, Badge, IconButton } from "@medusajs/ui"
 import { AdminProductCategory } from "@medusajs/types"
 import React, { useState, useRef, useEffect } from "react"
-import { TrianglesMini, XMarkMini, ChevronRightMini, ChevronLeftMini } from "@medusajs/icons"
+import { TrianglesMini, XMarkMini, ChevronRightMini, ChevronLeftMini, ArrowUturnLeft, PlayMiniSolid, TriangleRightMiniHover } from "@medusajs/icons"
 
 type MultiSelectCategoryProps = {
   categories: AdminProductCategory[]
   value: string[]
   onChange: (value: string[]) => void
-  getCategoryPath: (category: AdminProductCategory) => string
 }
 
 const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
   categories,
   value,
   onChange,
-  getCategoryPath,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -109,10 +107,10 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
         >
           {currentParentId !== null && (
             <div
-              className="flex cursor-pointer items-center gap-2 px-3 py-2 text-ui-fg-subtle hover:bg-ui-bg-base-hover border-b border-ui-border-base"
+              className="flex cursor-pointer items-center gap-3 px-3 py-2 text-ui-fg-subtle hover:bg-ui-bg-base-hover border-b border-ui-border-base"
               onClick={handleGoBack}
             >
-              <ChevronLeftMini />
+              <ArrowUturnLeft />
               <Text>{getBackButtonText()}</Text>
             </div>
           )}
@@ -128,13 +126,13 @@ const MultiSelectCategory: React.FC<MultiSelectCategoryProps> = ({
                   className={`flex cursor-pointer items-center justify-between px-1 py-1`}
                   onClick={() => handleItemClick(category.id)}
                 >
-                  <div className="flex items-center hover:bg-ui-bg-base-hover flex-1 px-2 mr-2 py-1.5 rounded-md">
-                    {isSelected && (<span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3" />)}
-                    <Text>{category.name}</Text>
+                  <div className="flex items-center hover:bg-ui-bg-base-hover flex-1 px-2 mr-2 py-1.5 rounded-md relative">
+                    {isSelected && <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full" />}
+                    <Text className="ml-6">{category.name}</Text>
                   </div>
                   {hasChildrenNode && (
-                    <div onClick={(e) => handleDrillDown(category, e)} className="p-1.5 rounded-md hover:bg-ui-bg-subtle-hover">
-                      <ChevronRightMini />
+                    <div onClick={(e) => handleDrillDown(category, e)} className="p-2 rounded-md hover:bg-ui-bg-base-hover">
+                      <TriangleRightMiniHover className="mr-1" />
                     </div>
                   )}
                 </div>
