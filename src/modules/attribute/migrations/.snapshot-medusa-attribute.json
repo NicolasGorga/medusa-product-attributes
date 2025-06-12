@@ -300,6 +300,7 @@
             "id"
           ],
           "referencedTableName": "public.attribute",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

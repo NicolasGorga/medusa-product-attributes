@@ -17,7 +17,7 @@ const Attribute = model.define('attribute', {
     values: model.hasMany(() => AttributeValue),
     sets: model.manyToMany(() => AttributeSet, { mappedBy: 'attributes' }),
 }).cascades({
-    delete: ['values']
+    delete: ['values', 'possible_values']
 })
 
 export default Attribute

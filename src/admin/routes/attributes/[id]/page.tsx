@@ -56,15 +56,15 @@ const AttributeDetailPage = () => {
   };
 
   const handleDelete = async () => {
-    // try {
-    //   await medusaClient.client.fetch(`/admin/plugin/attributes/${id}`, {
-    //     method: "DELETE",
-    //   });
-    //   toast.success("Attribute deleted!");
-    //   navigate("/a/attributes");
-    // } catch (error) {
-    //   toast.error((error as Error).message);
-    // }
+    try {
+      await medusaClient.client.fetch(`/admin/plugin/attributes/${id}`, {
+        method: "DELETE",
+      });
+      toast.success("Attribute deleted!");
+      navigate("/attributes");
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   };
 
   return (

@@ -65,7 +65,6 @@ export const PossibleValuesTable = ({ attribute, isLoading }: PossibleValuesTabl
                 >
                   Edit
                 </DropdownMenu.Item>
-                <DropdownMenu.Item onClick={() => toast.error("Delete clicked!")}>Delete</DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu>
           </div>
