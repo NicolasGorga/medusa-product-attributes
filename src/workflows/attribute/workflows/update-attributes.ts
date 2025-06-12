@@ -79,7 +79,7 @@ export const updateAttributesWorkflow = createWorkflow(
                 attribute_id: attribute.id,
               },
               [Modules.PRODUCT]: {
-                product_category_id: attrCat.id,
+                product_category_id: attrCat,
               },
             }))
           );
