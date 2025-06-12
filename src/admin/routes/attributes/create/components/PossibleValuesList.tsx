@@ -5,6 +5,10 @@ import { Button, Input, Text } from '@medusajs/ui'
 import { Plus, X, EllipsisHorizontal } from '@medusajs/icons'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { AdminCreateAttributeValueType } from '../../../../../api/admin/plugin/attributes/validators'
+import { CreateAttributeFormSchema } from '../page'
+import { z } from 'zod'
+
+type FormValues = z.infer<typeof CreateAttributeFormSchema>
 
 interface SortableItemProps {
   id: string
@@ -13,7 +17,7 @@ interface SortableItemProps {
 }
 
 const SortableItem = ({ id, index, onRemove }: SortableItemProps) => {
-  const { register } = useFormContext()
+  const { register, formState: { errors } } = useFormContext<FormValues>()
   const {
     attributes,
     listeners,
@@ -26,6 +30,8 @@ const SortableItem = ({ id, index, onRemove }: SortableItemProps) => {
     transform: CSS.Transform.toString(transform),
     transition,
   }
+
+  const fieldError = errors.possible_values?.[index]?.value
 
   return (
     <div
@@ -41,7 +47,8 @@ const SortableItem = ({ id, index, onRemove }: SortableItemProps) => {
         <EllipsisHorizontal className="text-ui-fg-subtle" />
       </button>
       <Input
-        className="flex-1"
+        className={"flex-1"}
+        aria-invalid={!!fieldError}
         placeholder="Enter value"
         {...register(`possible_values.${index}.value`)}
       />
@@ -56,7 +63,7 @@ const SortableItem = ({ id, index, onRemove }: SortableItemProps) => {
 }
 
 const PossibleValuesList = () => {
-  const { control, getValues } = useFormContext()
+  const { control, getValues } = useFormContext<FormValues>()
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'possible_values',

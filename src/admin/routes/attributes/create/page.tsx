@@ -23,11 +23,11 @@ import { AdminProductCategory } from "@medusajs/types";
 import MultiSelectCategory from "./components/MultiSelectCategory";
 import PossibleValuesList from "./components/PossibleValuesList";
 
-const FormSchema = CreateAttribute.extend({
+export const CreateAttributeFormSchema = CreateAttribute.extend({
   is_global: z.boolean(),
 });
 
-type FormValues = z.infer<typeof FormSchema>;
+type FormValues = z.infer<typeof CreateAttributeFormSchema>;
 
 const CreateAttributePage = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const CreateAttributePage = () => {
   }, []);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(CreateAttributeFormSchema),
     defaultValues: {
       name: "",
       description: "",
