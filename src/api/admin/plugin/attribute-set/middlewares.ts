@@ -5,7 +5,7 @@ import { listAttributeSetQueryConfig, retrieveAttributeSetQueryConfig } from "./
 
 export const adminAttributeSetMiddlewares: MiddlewareRoute[] = [
     {
-        matcher: 'admin/plugin/attribute-set',
+        matcher: '/admin/plugin/attribute-set',
         method: ['GET'],
         middlewares: [validateAndTransformQuery(AdminGetAttributeSetsParams, listAttributeSetQueryConfig)]
     },

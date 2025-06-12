@@ -20,13 +20,12 @@ export const POST = async (req: MedusaRequest<AdminCreateAttributeSetType>, res:
 }
 
 export const GET = async (req:MedusaRequest<AdminGetAttributesSetsParamsType>, res: MedusaResponse) => {
-    const query = await req.scope.resolve(ContainerRegistrationKeys.QUERY)
+    const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
 
     const { data: attributeSets, metadata } = await query.graph({
-        entity: 'attribute-set',
+        entity: 'attribute_set',
         filters: req.filterableFields,
-        fields: req.queryConfig.fields,
-        pagination: req.queryConfig.pagination,
+        ...req.queryConfig
     })
 
     return res.status(200).json({ attributeSets, count: metadata?.count, offset: metadata?.skip, limit: metadata?.take })

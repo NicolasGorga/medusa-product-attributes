@@ -27,7 +27,7 @@ export const AttributeSetTable = () => {
     queryFn: async () => {
       const response = await medusaClient.client.fetch<
         PaginatedResponse<{ attributeSets: AttributeSet[] }>
-      >("/admin/plugin/attributes", {
+      >("/admin/plugin/attribute-set", {
         query: {
           limit: pageSize,
           offset: (page - 1) * pageSize,
@@ -102,7 +102,7 @@ export const AttributeSetTable = () => {
         <Button
           variant="secondary"
           size="small"
-          onClick={() => navigate("/attribute-sets/create")}
+          onClick={() => navigate("/attributes/create-set")}
         >
           Create
         </Button>
