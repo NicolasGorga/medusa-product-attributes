@@ -9,7 +9,7 @@ import {
   Badge,
 } from "@medusajs/ui";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { medusaClient } from "../../../lib/config";
 import { Attribute } from "../../../../types/attribute/http/attribute";
 import { EllipsisHorizontal } from "@medusajs/icons";
@@ -19,6 +19,7 @@ import { SingleColumnLayout } from "../../../layouts/single-column";
 
 const AttributeDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { data: attribute, isLoading } = useQuery<Attribute>({
     queryKey: ["attribute", id],
@@ -50,6 +51,22 @@ const AttributeDetailPage = () => {
     );
   }
 
+  const handleEdit = () => {
+    navigate(`/attributes/${id}/edit`);
+  };
+
+  const handleDelete = async () => {
+    // try {
+    //   await medusaClient.client.fetch(`/admin/plugin/attributes/${id}`, {
+    //     method: "DELETE",
+    //   });
+    //   toast.success("Attribute deleted!");
+    //   navigate("/a/attributes");
+    // } catch (error) {
+    //   toast.error((error as Error).message);
+    // }
+  };
+
   return (
     <SingleColumnLayout>
       <Container className="divide-y p-0">
@@ -63,14 +80,10 @@ const AttributeDetailPage = () => {
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content align="end">
-                <DropdownMenu.Item
-                  onClick={() => toast.success("Edit clicked!")}
-                >
+                <DropdownMenu.Item onClick={handleEdit}>
                   Edit
                 </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  onClick={() => toast.error("Delete clicked!")}
-                >
+                <DropdownMenu.Item onClick={handleDelete}>
                   Delete
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
