@@ -67,6 +67,7 @@ export const AdminUpdateAttribute = z.object({
     is_filterable: z.boolean().optional(),
     handle: z.string().nullish(),
     metadata: z.record(z.unknown()).nullish(),
+    ui_component: z.nativeEnum(AttributeUIComponent).optional(),
     product_category_ids: z.array(z.string()).nullish(),
     possible_values: z.array(AdminUpdateAttributeValue).optional()
 }).strict()

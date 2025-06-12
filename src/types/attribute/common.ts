@@ -50,7 +50,7 @@ export interface UpdateAttributeDTO {
     /**
      * The associated product categories.
      */
-    categories?: { id: string }[]
+    product_category_ids?: { id: string }[]
 }
 
 /**

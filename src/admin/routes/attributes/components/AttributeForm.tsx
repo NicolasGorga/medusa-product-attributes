@@ -12,36 +12,44 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AttributeUIComponent } from "../../../../modules/attribute/types";
-import { CreateAttribute } from "../../../../api/admin/plugin/attributes/validators";
+import { AdminUpdateAttribute, CreateAttribute } from "../../../../api/admin/plugin/attributes/validators";
 import { AdminProductCategory } from "@medusajs/types";
 import MultiSelectCategory from "../create/components/MultiSelectCategory";
 import PossibleValuesList from "../create/components/PossibleValuesList";
 import { Attribute } from "../../../../types/attribute/http/attribute";
 
-export const AttributeFormSchema = CreateAttribute.extend({
+export const CreateAttributeFormSchema = CreateAttribute.extend({
   is_global: z.boolean(),
 });
 
-type FormValues = z.infer<typeof AttributeFormSchema>;
+type CreateFormValues = z.infer<typeof CreateAttributeFormSchema>;
 
+export const UdpateAttributeFormSchema = AdminUpdateAttribute.extend({
+    is_global: z.boolean(),
+  });
+  
+type UpdateFormValues = z.infer<typeof UdpateAttributeFormSchema>;
 interface AttributeFormProps {
   initialData?: Attribute;
-  onSubmit: (data: FormValues) => Promise<void>;
+  onSubmit: (data: CreateFormValues | UpdateFormValues) => Promise<void>;
   categories?: AdminProductCategory[]
+  mode?: 'create' | 'update'
 }
 
 export const AttributeForm = ({
   initialData,
   onSubmit,
   categories = [],
+  mode = 'create'
 }: AttributeFormProps) => {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(AttributeFormSchema),
+
+  const form = useForm<CreateFormValues | UpdateFormValues>({
+    resolver: zodResolver(mode === 'create' ? CreateAttributeFormSchema : UdpateAttributeFormSchema),
     defaultValues: {
       name: initialData?.name || "",
       description: initialData?.description || "",
       handle: initialData?.handle || "",
-      ui_component: initialData?.ui_component || AttributeUIComponent.SELECT,
+      ui_component: mode === 'update' ? undefined : initialData?.ui_component || AttributeUIComponent.SELECT,
       is_variant_defining: initialData?.is_variant_defining ?? true,
       is_filterable: initialData?.is_filterable ?? true,
       is_global: !initialData?.product_categories?.length,

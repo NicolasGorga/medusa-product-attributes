@@ -25,7 +25,7 @@ export const updateAttributesStep = createStep(
         })
 
         const attributes = normalized.map((element) => {
-            const { categories, ...attr } = element
+            const { product_category_ids, ...attr } = element
             return attr
         })
 

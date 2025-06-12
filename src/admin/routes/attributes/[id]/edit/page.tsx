@@ -5,16 +5,29 @@ import {
   Button,
   toast,
 } from "@medusajs/ui";
-import { useNavigate } from "react-router-dom";
-import { medusaClient } from "../../../lib/config";
+import { useNavigate, useParams } from "react-router-dom";
+import { medusaClient } from "../../../../lib/config";
+import { Attribute } from "../../../../../types/attribute/http/attribute";
 import { useEffect, useState } from "react";
 import { AdminProductCategory } from "@medusajs/types";
-import { AttributeForm, CreateAttributeFormSchema } from "../components/AttributeForm";
-import { z } from "zod";
+import { AttributeForm, CreateAttributeFormSchema } from "../../components/AttributeForm";
+import { useQuery } from "@tanstack/react-query";
+import { z } from "zod"
 
-const CreateAttributePage = () => {
+const EditAttributePage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
+
+  const { data: attribute, isLoading } = useQuery<Attribute>({
+    queryKey: ["attribute", id],
+    queryFn: async () => {
+      const response = await medusaClient.client.fetch<{
+        attribute: Attribute;
+      }>(`/admin/plugin/attributes/${id}`);
+      return response.attribute;
+    },
+  });
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -31,12 +44,12 @@ const CreateAttributePage = () => {
   const handleSave = async (data: z.infer<typeof CreateAttributeFormSchema>) => {
     try {
       const { is_global, ...payload } = data;
-      await medusaClient.client.fetch("/admin/plugin/attributes", {
+      await medusaClient.client.fetch(`/admin/plugin/attributes/${id}`, {
         method: "POST",
         body: payload,
       });
 
-      toast.success("Attribute created!");
+      toast.success("Attribute updated!");
       navigate(-1);
     } catch (error) {
       toast.error((error as Error).message);
@@ -48,6 +61,14 @@ const CreateAttributePage = () => {
     navigate(-1);
   };
 
+  if (isLoading) {
+    return null;
+  }
+
+  if (!attribute) {
+    return null;
+  }
+
   return (
     <FocusModal
       open={true}
@@ -57,14 +78,14 @@ const CreateAttributePage = () => {
     >
       <FocusModal.Content>
         <FocusModal.Header>
-          <Heading>Create Attribute</Heading>
+          <Heading>Edit Attribute</Heading>
         </FocusModal.Header>
         <FocusModal.Body className="flex flex-col items-center py-16">
           <div>
             <AttributeForm
-              //@ts-expect-error The received values will be for create form
+              initialData={attribute}
+              //@ts-expect-error correct data type will be received here
               onSubmit={handleSave}
-              onCancel={handleClose}
               categories={categories}
             />
           </div>
@@ -74,7 +95,7 @@ const CreateAttributePage = () => {
             Cancel
           </Button>
           <Button type="submit" form="attribute-form">
-            Create
+            Save
           </Button>
         </FocusModal.Footer>
       </FocusModal.Content>
@@ -82,6 +103,8 @@ const CreateAttributePage = () => {
   );
 };
 
-export const config = defineRouteConfig({});
+export const config = defineRouteConfig({
+  label: "Edit Attribute",
+});
 
-export default CreateAttributePage;
+export default EditAttributePage; 

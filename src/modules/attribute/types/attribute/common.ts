@@ -63,7 +63,7 @@ export interface UpdateAttributeDTO {
     /**
      * The associated product categories
      */
-    categories?: string[]
+    product_category_ids?: string[]
 }
 
 /**

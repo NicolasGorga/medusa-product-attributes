@@ -25,7 +25,7 @@ export const updateAttributesWorkflow = createWorkflow(
     const toUpdateInput = transform({ input }, ({ input: { attributes } }) => {
       return attributes.map((attribute) => ({
         ...attribute,
-        categories: undefined,
+        product_category_ids: undefined,
       }));
     });
 
@@ -34,7 +34,7 @@ export const updateAttributesWorkflow = createWorkflow(
     const attributesIdsWithCategories = transform({ input, updatedAttributes }, ({ input, updatedAttributes }) => {
         const updatedAttributeIds = updatedAttributes.map(attr => attr.id)
         const attributeIdsWithoutCategories = input.attributes
-            .filter(attr => !attr.categories)
+            .filter(attr => !attr.product_category_ids)
             .map(attr => attr.id)
         return arrayDifference(updatedAttributeIds, attributeIdsWithoutCategories)
     })
@@ -72,9 +72,9 @@ export const updateAttributesWorkflow = createWorkflow(
       { input },
       ({ input: { attributes }}) => {
         return attributes
-          .filter((attribute) => attribute.categories)
+          .filter((attribute) => attribute.product_category_ids)
           .flatMap((attribute) =>
-            attribute.categories!.map((attrCat) => ({
+            attribute.product_category_ids!.map((attrCat) => ({
               [ATTRIBUTE_MODULE]: {
                 attribute_id: attribute.id,
               },
