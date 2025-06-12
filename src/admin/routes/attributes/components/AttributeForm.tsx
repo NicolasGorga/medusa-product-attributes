@@ -27,7 +27,6 @@ type FormValues = z.infer<typeof AttributeFormSchema>;
 interface AttributeFormProps {
   initialData?: Attribute;
   onSubmit: (data: FormValues) => Promise<void>;
-  submitLabel?: string;
   categories?: AdminProductCategory[]
 }
 
