@@ -1,4 +1,5 @@
 import { AttributeUIComponent } from '../../../../modules/attribute/types'
+import { AttributeSet } from '../attribute-set'
 
 export interface Attribute {
   id: string
@@ -20,10 +21,7 @@ export interface Attribute {
     id: string
     value: string
   }>
-  sets?: Array<{
-    id: string
-    name: string
-  }>
+  sets?: AttributeSet[]
   product_categories?: Array<{
     id: string
     name: string
