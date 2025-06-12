@@ -5,7 +5,7 @@ import { AttributeUIComponent } from '../../../../modules/attribute/types'
 
 export type AdminCreateAttributeValueType = z.infer<typeof AdminCreateAttributeValue>
 export const AdminCreateAttributeValue = z.object({
-    value: z.string(),
+    value: z.string().min(1),
     rank: z.number(),
     metadata: z.record(z.unknown()).optional(),
 })
