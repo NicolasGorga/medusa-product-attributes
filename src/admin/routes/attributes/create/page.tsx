@@ -64,6 +64,7 @@ const CreateAttributePage = () => {
             <AttributeForm
               onSubmit={handleSave}
               onCancel={handleClose}
+              categories={categories}
             />
           </div>
         </FocusModal.Body>

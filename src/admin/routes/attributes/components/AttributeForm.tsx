@@ -27,15 +27,14 @@ type FormValues = z.infer<typeof AttributeFormSchema>;
 interface AttributeFormProps {
   initialData?: Attribute;
   onSubmit: (data: FormValues) => Promise<void>;
-  onCancel: () => void;
   submitLabel?: string;
+  categories?: AdminProductCategory[]
 }
 
 export const AttributeForm = ({
   initialData,
   onSubmit,
-  onCancel,
-  submitLabel = "Create",
+  categories = [],
 }: AttributeFormProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(AttributeFormSchema),
@@ -140,7 +139,7 @@ export const AttributeForm = ({
                 Product Categories
               </Label>
               <MultiSelectCategory
-                categories={[]} // This will be passed from the parent
+                categories={categories} // This will be passed from the parent
                 value={form.watch("product_category_ids") || []}
                 onChange={(value) =>
                   form.setValue("product_category_ids", value)
