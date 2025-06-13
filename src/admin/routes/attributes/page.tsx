@@ -26,7 +26,7 @@ const AttributesPage = () => {
   const { attributes, count, isLoading } = useAttributes({
     limit: pageSize,
     offset: (page - 1) * pageSize,
-  },)
+  })
 
   const columns = useAttributeTableColumns()
 

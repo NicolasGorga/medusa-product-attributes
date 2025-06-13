@@ -62,6 +62,35 @@ export const useAttributeSet = (
   return { ...data, ...rest };
 };
 
+export const useUpdateAttributeSet = (
+  id: string,
+  options?: 
+    UseMutationOptions<
+      { attributeSet: AttributeSet },
+      FetchError,
+      Partial<Pick<AttributeSet, 'name' | 'handle' | 'description' | 'metadata'>>
+    >
+) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (payload) => medusaClient.client.fetch(`/admin/plugin/attribute-set/${id}`, {
+      method: 'POST',
+      body: payload
+    }),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: attributeSetQueryKeys.detail(id)
+      })
+      queryClient.invalidateQueries({
+        queryKey: attributeSetQueryKeys.list()
+      })
+
+      options?.onSuccess?.(data, variables, context)
+    },
+    ...options
+  })
+}
+
 export const useBatchAttributesToSets = (
   attributeSetId: string,
   options?: 

@@ -31,3 +31,28 @@ export const useAttributes = (
     })
     return { ...data, ...rest }
 }
+
+export const useAttribute = (
+    id: string,
+    query?: Record<string, unknown>,
+    options?: Omit<
+        UseQueryOptions<
+            { attribute: Attribute },
+            FetchError,
+            { attribute: Attribute },
+            QueryKey
+        >,
+        "queryFn" | "queryKey"
+    >
+) => {
+    const { data, ...rest } = useQuery({
+        queryKey: attributeQueryKeys.detail(id, query),
+        queryFn: () => 
+            medusaClient.client.fetch<{ attribute: Attribute }>(`/admin/plugin/attributes/${id}`, {
+                method: 'GET',
+                query,
+            }),
+        ...options,
+    })
+    return { ...data, ...rest }
+}

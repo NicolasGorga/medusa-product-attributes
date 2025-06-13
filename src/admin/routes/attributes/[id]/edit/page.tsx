@@ -7,27 +7,20 @@ import {
 } from "@medusajs/ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { medusaClient } from "../../../../lib/config";
-import { Attribute } from "../../../../../types/attribute/http/attribute";
 import { useEffect, useState } from "react";
 import { AdminProductCategory } from "@medusajs/types";
 import { AttributeForm, CreateAttributeFormSchema } from "../../components/AttributeForm";
-import { useQuery } from "@tanstack/react-query";
 import { z } from "zod"
+import { useAttribute } from "../../../../hooks/api/attributes";
 
 const EditAttributePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
 
-  const { data: attribute, isLoading } = useQuery<Attribute>({
-    queryKey: ["attribute", id],
-    queryFn: async () => {
-      const response = await medusaClient.client.fetch<{
-        attribute: Attribute;
-      }>(`/admin/plugin/attributes/${id}`);
-      return response.attribute;
-    },
-  });
+  const { attribute, isLoading } = useAttribute(id ?? "", {
+    fields: 'name, description, handle, is_variant_defining, is_filterable, ui_component, product_categories.name, possible_values.*'
+  }, { enabled: !!id })
 
   useEffect(() => {
     const fetchCategories = async () => {

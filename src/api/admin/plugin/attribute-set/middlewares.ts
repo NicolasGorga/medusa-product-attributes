@@ -1,4 +1,4 @@
-import { AdminBatchLinkAttributeSetAttributes, AdminCreateAttributeSet, AdminGetAttributeSetParams, AdminGetAttributeSetsParams } from "./validators";
+import { AdminBatchLinkAttributeSetAttributes, AdminCreateAttributeSet, AdminGetAttributeSetParams, AdminGetAttributeSetsParams, AdminUpdateAttributeSet } from "./validators";
 import { MiddlewareRoute, validateAndTransformBody, validateAndTransformQuery } from "@medusajs/framework";
 
 import { listAttributeSetQueryConfig, retrieveAttributeSetQueryConfig } from "./query-config";
@@ -22,6 +22,14 @@ export const adminAttributeSetMiddlewares: MiddlewareRoute[] = [
         method: ['GET'],
         middlewares: [
             validateAndTransformQuery(AdminGetAttributeSetParams, retrieveAttributeSetQueryConfig)
+        ]
+    },
+    {
+        matcher: '/admin/plugin/attribute-set/:id',
+        method: ['POST'],
+        middlewares: [
+            validateAndTransformQuery(AdminGetAttributeSetParams, retrieveAttributeSetQueryConfig),
+            validateAndTransformBody(AdminUpdateAttributeSet)
         ]
     },
     {

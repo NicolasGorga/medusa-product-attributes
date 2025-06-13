@@ -66,7 +66,6 @@ export const AttributeSetAttributesForm = ({
       },
       {
         onSuccess: () => {
-          console.log('Linked attrs')
           toast.success("Linked attributes to set");
           navigate(-1);
         },

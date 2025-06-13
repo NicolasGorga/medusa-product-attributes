@@ -36,7 +36,7 @@ export const AdminCreateAttributeSet = AdminBaseAttributeSet.merge(z.object({
 })).strict()
 
 export type AdminUpdateAttributeSetType = z.infer<typeof AdminUpdateAttributeSet>
-export const AdminUpdateAttributeSet = AdminBaseAttributeSet
+export const AdminUpdateAttributeSet = AdminBaseAttributeSet.merge(z.object({ name: z.string().min(1) }))
 
 export type AdminBatchLinkAttributeSetAttributesType = z.infer<typeof AdminBatchLinkAttributeSetAttributes>
 export const AdminBatchLinkAttributeSetAttributes = z.object({

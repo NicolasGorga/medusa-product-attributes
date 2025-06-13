@@ -16,20 +16,15 @@ import { EllipsisHorizontal } from "@medusajs/icons";
 import { SectionRow } from "../../../components/section-row";
 import { PossibleValuesTable } from "../components/possible-values-table";
 import { SingleColumnLayout } from "../../../layouts/single-column";
+import { useAttribute } from "../../../hooks/api/attributes";
 
 const AttributeDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: attribute, isLoading } = useQuery<Attribute>({
-    queryKey: ["attribute", id],
-    queryFn: async () => {
-      const response = await medusaClient.client.fetch<{
-        attribute: Attribute;
-      }>(`/admin/plugin/attributes/${id}`);
-      return response.attribute;
-    },
-  });
+  const { attribute, isLoading } = useAttribute(id ?? "", {
+    fields: 'name, description, handle, product_categories.name, possible_values.*'
+  }, { enabled: !!id })
 
   if (isLoading) {
     return (
