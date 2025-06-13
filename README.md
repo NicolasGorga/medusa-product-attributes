@@ -16,9 +16,7 @@ All the progress is recorded in CHANGELOG.md and so far, it is solely focused on
 
 ## Roadmap
 
-- Introduce entities to facilitate constructing UI components in Admin Panel and filtering them in Storefront
-- Create Admin panel route / widgets to interact with attribute / attribute values and link them to products
-- Create adaptation of starter to show example of Storefront filtering products with attributes
+- Create Admin panel widgets link attribute values to products
 
 ## Prerequisites
 
