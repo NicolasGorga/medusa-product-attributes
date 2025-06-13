@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { MetadataEditor } from "../../../../components/metadata-editor"
+import { useAttribute, useUpdateAttributePossibleValue } from "../../../../hooks/api/attributes"
 
 const formSchema = z.object({
   value: z.string().min(1, "Value is required"),
@@ -30,14 +31,13 @@ const EditPossibleValuePage = () => {
   const navigate = useNavigate()
   const possibleValueId = searchParams.get("possible_value_id")
 
-  const { data: attribute, isLoading: isAttributeLoading } = useQuery<Attribute>({
-    queryKey: ["attribute", attributeId],
-    queryFn: async () => {
-      const response = await medusaClient.client.fetch<{ attribute: Attribute }>(`/admin/plugin/attributes/${attributeId}`)
-      return response.attribute
-    },
+  const { attribute, isLoading: isAttributeLoading } = useAttribute(attributeId!, {
+    fields: 'possible_values.*'
+  }, {
     enabled: !!attributeId,
   })
+
+  const { mutateAsync, isPending } = useUpdateAttributePossibleValue(attributeId!, possibleValueId!) 
 
   const possibleValue = attribute?.possible_values?.find((pv: { id: string }) => pv.id === possibleValueId)
 
@@ -65,29 +65,32 @@ const EditPossibleValuePage = () => {
     const transformedMetadata = data.metadata.reduce((acc, item) => {
       // Only include valid key-value pairs where both key and value are non-empty
       if (item.key.trim() !== "" && item.value.trim() !== "") {
-        acc[item.key] = item.value
+        acc[item.key] = item.value;
       }
-      return acc
-    }, {} as Record<string, unknown>)
+      return acc;
+    }, {} as Record<string, unknown>);
 
-    try {
-      await medusaClient.client.fetch(`/admin/plugin/attributes/${attributeId}/values/${possibleValueId}`, {
-        method: "POST",
-        body: {
-          id: possibleValueId,
-          value: data.value,
-          rank: data.rank,
-          metadata: Object.keys(transformedMetadata).length > 0 ? transformedMetadata : null
-        }
-      })
-      
-      toast.success("Possible value updated!")
-      navigate(-1)
-    } catch (error) {
-      toast.error("Failed to update possible value")
-      console.error(error)
-    }
-  })
+    await mutateAsync(
+      {
+        value: data.value,
+        rank: data.rank,
+        metadata:
+          Object.keys(transformedMetadata).length > 0
+            ? transformedMetadata
+            : null,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Possible value updated!");
+          navigate(-1);
+        },
+        onError: (error) => {
+          toast.error("Failed to update possible value");
+          console.error(error);
+        },
+      }
+    );
+  });
 
   const handleClose = () => {
     navigate(`/attributes/${attributeId}`)
@@ -154,8 +157,8 @@ const EditPossibleValuePage = () => {
               </form>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="secondary" onClick={handleClose}>Cancel</Button>
-              <Button type="submit" form="edit-possible-value-form">Save</Button>
+              <Button variant="secondary" onClick={handleClose} disabled={!!isPending}>Cancel</Button>
+              <Button type="submit" form="edit-possible-value-form" disabled={!!isPending}>Save</Button>
             </Drawer.Footer>
           </>
         )}

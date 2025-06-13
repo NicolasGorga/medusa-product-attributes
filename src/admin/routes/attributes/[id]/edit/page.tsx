@@ -1,26 +1,34 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk";
-import {
-  FocusModal,
-  Heading,
-  Button,
-  toast,
-} from "@medusajs/ui";
+import { FocusModal, Heading, Button, toast } from "@medusajs/ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { medusaClient } from "../../../../lib/config";
 import { useEffect, useState } from "react";
 import { AdminProductCategory } from "@medusajs/types";
-import { AttributeForm, CreateAttributeFormSchema } from "../../components/AttributeForm";
-import { z } from "zod"
-import { useAttribute } from "../../../../hooks/api/attributes";
+import {
+  AttributeForm,
+  CreateAttributeFormSchema,
+} from "../../components/AttributeForm";
+import { z } from "zod";
+import {
+  useAttribute,
+  useUpdateAttribute,
+} from "../../../../hooks/api/attributes";
 
 const EditAttributePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
 
-  const { attribute, isLoading } = useAttribute(id ?? "", {
-    fields: 'name, description, handle, is_variant_defining, is_filterable, ui_component, product_categories.name, possible_values.*'
-  }, { enabled: !!id })
+  const { attribute, isLoading } = useAttribute(
+    id ?? "",
+    {
+      fields:
+        "name, description, handle, is_variant_defining, is_filterable, ui_component, product_categories.name, possible_values.*",
+    },
+    { enabled: !!id }
+  );
+
+  const { mutateAsync } = useUpdateAttribute(id!);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -34,20 +42,20 @@ const EditAttributePage = () => {
     fetchCategories();
   }, []);
 
-  const handleSave = async (data: z.infer<typeof CreateAttributeFormSchema>) => {
-    try {
-      const { is_global, ...payload } = data;
-      await medusaClient.client.fetch(`/admin/plugin/attributes/${id}`, {
-        method: "POST",
-        body: payload,
-      });
-
-      toast.success("Attribute updated!");
-      navigate(-1);
-    } catch (error) {
-      toast.error((error as Error).message);
-      console.error(error);
-    }
+  const handleSave = async (
+    data: z.infer<typeof CreateAttributeFormSchema>
+  ) => {
+    const { is_global, ...payload } = data;
+    await mutateAsync(payload, {
+      onSuccess: () => {
+        toast.success("Attribute updated!");
+        navigate(-1);
+      },
+      onError: (error) => {
+        toast.error((error as Error).message);
+        console.error(error);
+      },
+    });
   };
 
   const handleClose = () => {
@@ -100,4 +108,4 @@ export const config = defineRouteConfig({
   label: "Edit Attribute",
 });
 
-export default EditAttributePage; 
+export default EditAttributePage;

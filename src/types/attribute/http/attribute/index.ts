@@ -10,13 +10,7 @@ export interface Attribute {
   handle: string
   ui_component: AttributeUIComponent
   metadata: Record<string, unknown> | null
-  possible_values?: Array<{
-    id: string
-    value: string
-    rank: number
-    created_at: string
-    metadata: Record<string, unknown> | null
-  }>
+  possible_values?: AttributePossibleValue[]
   values?: Array<{
     id: string
     value: string
@@ -26,6 +20,14 @@ export interface Attribute {
     id: string
     name: string
   }>
+}
+
+export interface AttributePossibleValue {
+  id: string
+  value: string
+  rank: number
+  created_at: string
+  metadata: Record<string, unknown> | null
 }
 
 export interface AttributesResponse {
