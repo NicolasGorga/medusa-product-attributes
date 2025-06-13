@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.1.0 - 2025-06-13
 ### Added
 - UI Routes in admin panel to manage attributes, attribute sets and possible values
 - Added ui_component to attribute schema, to allow admin widgets in product to understand how they should ask for the value input
-- API Routes and workflows to facilitate interacting with the UI components 
+- API Routes and workflows to facilitate interacting with the UI components
 
 ## 2.0.2 - 2025-06-10
 ### Fixed
