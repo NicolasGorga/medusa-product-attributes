@@ -3,6 +3,8 @@ import { MedusaRequest, MedusaResponse, refetchEntity } from "@medusajs/framewor
 import { AdminCreateAttributeSetType, AdminGetAttributesSetsParamsType } from "./validators";
 import { createAttributeSetWorkflow } from "../../../../workflows/attribute-set/workflows/create-attribute-set";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
+import { AttributeSet } from "../../../../types/attribute";
+import { PaginatedResponse } from "@medusajs/framework/types";
 
 export const POST = async (req: MedusaRequest<AdminCreateAttributeSetType>, res: MedusaResponse) => {
     const { result: [attributeSet] } = await createAttributeSetWorkflow(req.scope).run({

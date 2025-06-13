@@ -2,82 +2,33 @@ import { defineRouteConfig } from "@medusajs/admin-sdk";
 import {
   Container,
   Heading,
-  Badge,
   Button,
   DataTable,
-  createDataTableColumnHelper,
   useDataTable,
   DataTablePaginationState,
 } from "@medusajs/ui";
 import { ListBullet } from "@medusajs/icons";
-import { useQuery } from "@tanstack/react-query";
-import { medusaClient } from "../../lib/config";
 import {
   Attribute,
-  AttributesResponse,
 } from "../../../types/attribute/http/attribute";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SingleColumnLayout } from "../../layouts/single-column";
 import { AttributeSetTable } from "./components/AttributeSetTable";
+import { useAttributeTableColumns } from "../../hooks/table/columns";
+import { useAttributes } from "../../hooks/api/attributes";
 
 const AttributesPage = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const { data, isLoading } = useQuery<AttributesResponse>({
-    queryKey: ["attributes", page],
-    queryFn: async () => {
-      const response = await medusaClient.client.fetch<AttributesResponse>(
-        "/admin/plugin/attributes",
-        {
-          query: {
-            limit: pageSize,
-            offset: (page - 1) * pageSize,
-          },
-        }
-      );
-      return response;
-    },
-  });
+  const { attributes, count, isLoading } = useAttributes({
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+  },)
 
-  const columnHelper = createDataTableColumnHelper<Attribute>();
-
-  const columns = [
-    columnHelper.accessor("name", {
-      header: "Name",
-    }),
-    columnHelper.accessor("handle", {
-      header: "Handle",
-    }),
-    columnHelper.accessor("product_categories", {
-      header: "Global",
-      cell: (info) => {
-        const isGlobal = !info.getValue()?.length;
-        return (
-          <Badge size="xsmall" color={isGlobal ? "green" : "grey"}>
-            {isGlobal ? "Yes" : "No"}
-          </Badge>
-        );
-      },
-    }),
-    columnHelper.accessor("possible_values", {
-      header: "Possible Values",
-      cell: (info) => {
-        const values = info.getValue();
-        return (
-          <div className="flex flex-wrap gap-2">
-            {values?.map((value) => (
-              <Badge size="xsmall" key={value.id}>
-                {value.value}
-              </Badge>
-            )) || "-"}
-          </div>
-        );
-      },
-    }),
-  ];
+  const columns = useAttributeTableColumns()
 
   const [pagination, setPagination] = useState<DataTablePaginationState>({
     pageIndex: page - 1,
@@ -88,9 +39,9 @@ const AttributesPage = () => {
 
   const table = useDataTable({
     columns,
-    data: data?.attributes || [],
+    data: attributes || [],
     getRowId: (attribute: Attribute) => attribute.id,
-    rowCount: data?.count || 0,
+    rowCount: count || 0,
     isLoading,
     pagination: {
       state: pagination,

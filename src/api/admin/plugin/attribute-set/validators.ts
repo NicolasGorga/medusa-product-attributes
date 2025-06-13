@@ -1,5 +1,26 @@
-import { createFindParams, createSelectParams } from '@medusajs/medusa/api/utils/validators'
+import { applyAndAndOrOperators } from '@medusajs/medusa/api/utils/common-validators/common'
+import { createFindParams, createOperatorMap, createSelectParams } from '@medusajs/medusa/api/utils/validators'
 import { z } from 'zod'
+
+export const AdminGetAttributeSetParams = createSelectParams()
+export type AdminGetAttributeSetParamsType = z.infer<typeof AdminGetAttributeSetParams>
+
+export const GetAttributeSetsParams = z.object({
+    id: z.string().optional(),
+    name: z.string().optional(),
+    handle: z.string().optional(),
+    created_at: createOperatorMap().optional(),
+    updated_at: createOperatorMap().optional(),
+    deleted_at: createOperatorMap().optional(),
+})
+export const AdminGetAttributeSetsParams = createFindParams({
+    offset: 0,
+    limit: 50,
+})
+.merge(applyAndAndOrOperators(GetAttributeSetsParams))
+.merge(GetAttributeSetsParams)
+
+export type AdminGetAttributesSetsParamsType = z.infer<typeof AdminGetAttributeSetsParams>
 
 const AdminBaseAttributeSet = z.object({
     name: z.string().optional(),
@@ -17,11 +38,8 @@ export const AdminCreateAttributeSet = AdminBaseAttributeSet.merge(z.object({
 export type AdminUpdateAttributeSetType = z.infer<typeof AdminUpdateAttributeSet>
 export const AdminUpdateAttributeSet = AdminBaseAttributeSet
 
-export const AdminGetAttributeSetParams = createSelectParams()
-export type AdminGetAttributeSetParamsType = z.infer<typeof AdminGetAttributeSetParams>
-
-export const AdminGetAttributeSetsParams = createFindParams({
-    offset: 0,
-    limit: 50,
+export type AdminBatchLinkAttributeSetAttributesType = z.infer<typeof AdminBatchLinkAttributeSetAttributes>
+export const AdminBatchLinkAttributeSetAttributes = z.object({
+    add: z.array(z.string()).optional(),
+    remove: z.array(z.string()).optional(),
 })
-export type AdminGetAttributesSetsParamsType = z.infer<typeof AdminGetAttributeSetsParams>

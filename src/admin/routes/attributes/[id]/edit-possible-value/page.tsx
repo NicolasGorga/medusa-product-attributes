@@ -1,14 +1,14 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Drawer, Heading, Text, Button, Input, toast, Label, DropdownMenu } from "@medusajs/ui"
+import { Drawer, Heading, Text, Button, Input, toast, Label } from "@medusajs/ui"
 import { useQuery } from "@tanstack/react-query"
 import { useParams, useSearchParams, useNavigate } from "react-router-dom"
 import { medusaClient } from "../../../../lib/config"
 import { Attribute } from "../../../../../types/attribute/http/attribute"
 import { useEffect } from "react"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { EllipsisHorizontal, Trash } from "@medusajs/icons"
+import { MetadataEditor } from "../../../../components/metadata-editor"
 
 const formSchema = z.object({
   value: z.string().min(1, "Value is required"),
@@ -50,14 +50,8 @@ const EditPossibleValuePage = () => {
     },
   })
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "metadata",
-  })
-
   useEffect(() => {
     if (possibleValue) {
-        console.log('setting metadata ', )
       const metadataArray = Object.entries(possibleValue.metadata || {}).map(([key, value]) => ({ key, value: String(value) }))
       form.reset({
         value: possibleValue.value,
@@ -155,64 +149,7 @@ const EditPossibleValuePage = () => {
                     )}
                   </div>
 
-                  <div className="col-span-2 mt-4">
-                    <Heading level="h3" className="inter-small-semibold mb-2">Metadata</Heading>
-                    <div className="border rounded-lg overflow-hidden">
-                      <div className="grid grid-cols-[1fr_1fr_40px] bg-ui-bg-subtle border-b py-2 px-3 text-ui-fg-subtle text-sm font-semibold">
-                        <span className="border-r pr-2">Key</span>
-                        <span>Value</span>
-                        <span></span>
-                      </div>
-                      {fields.map((field: { id: string, key: string, value: string }, index: number) => (
-                        <div key={field.id} className="grid grid-cols-[1fr_1fr_40px] items-center border-b last:border-b-0">
-                          <div className="py-2 pl-3 pr-2 border-r">
-                            <Input
-                              placeholder="Key"
-                              className="!shadow-none !border-none focus-visible:!outline-none bg-transparent"
-                              {...form.register(`metadata.${index}.key`)}
-                            />
-                            {form.formState.errors.metadata?.[index]?.key && (
-                              <Text className="text-red-500 text-sm mt-1">
-                                {form.formState.errors.metadata[index].key.message}
-                              </Text>
-                            )}
-                          </div>
-                          <div className="py-2 pl-3 pr-2">
-                            <Input
-                              placeholder="Value"
-                              className="!shadow-none !border-none focus-visible:!outline-none bg-transparent"
-                              {...form.register(`metadata.${index}.value`)}
-                            />
-                            {form.formState.errors.metadata?.[index]?.value && (
-                              <Text className="text-red-500 text-sm mt-1">
-                                {form.formState.errors.metadata[index].value.message}
-                              </Text>
-                            )}
-                          </div>
-                          <div className="flex justify-end pr-3">
-                            <DropdownMenu>
-                              <DropdownMenu.Trigger asChild>
-                                <Button variant="transparent" size="small">
-                                  <EllipsisHorizontal />
-                                </Button>
-                              </DropdownMenu.Trigger>
-                              <DropdownMenu.Content align="end">
-                                <DropdownMenu.Item onClick={() => remove(index)} className="gap-x-2">
-                                  <Trash className="text-ui-fg-subtle" />
-                                  Remove
-                                </DropdownMenu.Item>
-                              </DropdownMenu.Content>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="p-3">
-                        <Button type="button" variant="secondary" size="small" onClick={() => append({ key: "", value: "" })} className="w-full">
-                          + Add Row
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                  <MetadataEditor form={form} />
                 </div>
               </form>
             </Drawer.Body>
