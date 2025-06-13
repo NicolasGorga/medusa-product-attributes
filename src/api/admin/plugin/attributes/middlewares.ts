@@ -1,5 +1,5 @@
 import { MiddlewareRoute, validateAndTransformBody, validateAndTransformQuery } from "@medusajs/framework";
-import { AdminCreateAttribute, AdminCreateAttributeValue, AdminGetAttributeParams, AdminGetAttributesParams, AdminGetAttributeValueParams, AdminGetAttributeValuesParams, AdminUpdateAttribute } from "./validators";
+import { AdminCreateAttribute, AdminCreateAttributeValue, AdminGetAttributeParams, AdminGetAttributesParams, AdminGetAttributeValueParams, AdminGetAttributeValuesParams, AdminUpdateAttribute, AdminUpdateAttributeValue } from "./validators";
 import * as QueryConfig from './query-config'
 import { adminAttributesRoutePath } from "../../../utils/constants";
 
@@ -77,4 +77,15 @@ export const adminAttributeRoutesMiddlewares: MiddlewareRoute[] = [
             )
         ]
     },
+    {
+        method: ['POST'],
+        matcher: `${adminAttributesRoutePath}/:id/values/:valueId`,
+        middlewares: [
+            validateAndTransformBody(AdminUpdateAttributeValue),
+            validateAndTransformQuery(
+                AdminGetAttributeValueParams,
+                QueryConfig.retrieveAttributeValueQueryConfig
+            )
+        ]
+    }
 ]

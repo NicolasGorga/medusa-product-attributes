@@ -1,5 +1,14 @@
 import { AdminCreateAttributeType } from "../../../../api/admin/plugin/attributes/validators"
 
+export enum AttributeUIComponent {
+    SELECT = 'select', // ui component with list of values which are represented in possible value table
+    MULTIVALUE = 'multivalue',
+    UNIT = 'unit', // cantimeters, grams etc which are represented in scale table
+    TOGGLE = 'toggle',
+    TEXTAREA = 'text_area',
+    COLOR_PICKER = 'color_picker'
+}
+
 export type CreateAttributesWorkflowInput = {
     attributes: AdminCreateAttributeType[]
 }
@@ -54,7 +63,7 @@ export interface UpdateAttributeDTO {
     /**
      * The associated product categories
      */
-    categories?: { id: string }[]
+    product_category_ids?: string[]
 }
 
 /**
@@ -81,10 +90,5 @@ export interface UpdateAttributeValueDTO {
     /**
      * Holds custom data in key-value pairs.
      */
-    metadata?: Record<string, unknown>
-
-    /**
-     * The id of the associated attribute.
-     */
-    atribute_id?: string
+    metadata?: Record<string, unknown> | null
 }
