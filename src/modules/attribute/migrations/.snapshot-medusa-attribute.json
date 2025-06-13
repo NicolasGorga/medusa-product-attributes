@@ -62,6 +62,24 @@
           "nullable": false,
           "mappedType": "text"
         },
+        "ui_component": {
+          "name": "ui_component",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'select'",
+          "enumItems": [
+            "select",
+            "multivalue",
+            "unit",
+            "toggle",
+            "text_area",
+            "color_picker"
+          ],
+          "mappedType": "enum"
+        },
         "metadata": {
           "name": "metadata",
           "type": "jsonb",
@@ -282,6 +300,7 @@
             "id"
           ],
           "referencedTableName": "public.attribute",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

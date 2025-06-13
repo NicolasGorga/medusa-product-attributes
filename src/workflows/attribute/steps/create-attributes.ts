@@ -2,7 +2,7 @@ import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { CreateAttributeStepInput } from "../../../modules/attribute/types/attribute/common"
 import AttributeModuleService from "../../../modules/attribute/service"
 import attribute, { ATTRIBUTE_MODULE } from "../../../modules/attribute"
-import { kebabCase } from "@medusajs/framework/utils"
+import { kebabCase, toHandle } from "@medusajs/framework/utils"
 
 export const createAttributesStepId = 'create-attributes'
 
@@ -14,7 +14,7 @@ export const createAttributesStep = createStep(
         const validated = data.map(attribute => {
             let result = { ...attribute }
             if (!attribute.handle) {
-                result.handle = kebabCase(attribute.name)
+                result.handle = toHandle(attribute.name)
             }
             return result
         })

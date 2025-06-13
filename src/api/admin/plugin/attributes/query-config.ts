@@ -5,9 +5,11 @@ export const defaultAdminAttributeFields = [
     'is_variant_defining',
     'is_filterable',
     'handle',
+    'ui_component',
     'metadata',
     '*possible_values',
-    '*product_categories'
+    'product_categories.id',
+    'product_categories.name',
 ]
 
 export const retrieveAttributeQueryConfig = {
@@ -25,6 +27,7 @@ export const defaultAdminAttributeValueFields = [
     'id',
     'value',
     'rank',
+    'metadata',
 ]
 
 export const retrieveAttributeValueQueryConfig = {

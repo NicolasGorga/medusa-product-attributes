@@ -86,7 +86,7 @@ class AttributeModuleService extends MedusaService({
     // }, undefined, sharedContext)
 
     const attributesInput = input.map(toUpdate => {
-      const { possible_values, categories, ...attribute } = toUpdate;
+      const { possible_values, product_category_ids, ...attribute } = toUpdate;
       return {
         ...attribute,
         possible_values: upsertedValues

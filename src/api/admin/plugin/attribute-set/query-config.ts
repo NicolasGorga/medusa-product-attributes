@@ -13,7 +13,7 @@ export const retrieveAttributeSetQueryConfig = {
     isList: false,
 }
 
-export const listAttributeQueryConfig = {
+export const listAttributeSetQueryConfig = {
     ...retrieveAttributeSetQueryConfig,
     defaultLimit: 50,
     isList: true,

@@ -9,6 +9,7 @@ export const GET = async (req: MedusaRequest<AdminGetAttributesParamsType>, res:
     // only the id is returned for each category
     const { data: attributes, metadata } = await query.graph({
         entity: 'attribute',
+        filters: req.filterableFields,
         ...req.queryConfig
     })
     return res.status(200).json({ attributes, count: metadata?.count, offset: metadata?.skip, limit: metadata?.take })

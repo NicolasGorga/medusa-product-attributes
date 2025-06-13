@@ -1,3 +1,4 @@
+import { AttributeUIComponent } from "../types"
 import AttributePossibleValue from "./attribute-possible-value"
 import AttributeSet from "./attribute-set"
 import AttributeValue from "./attribute-value"
@@ -10,12 +11,13 @@ const Attribute = model.define('attribute', {
     is_variant_defining: model.boolean().default(true),
     is_filterable: model.boolean().default(true),
     handle: model.text().unique(),
+    ui_component: model.enum(Object.values(AttributeUIComponent)).default(AttributeUIComponent.SELECT),
     metadata: model.json().nullable(),
     possible_values: model.hasMany(() => AttributePossibleValue),
     values: model.hasMany(() => AttributeValue),
     sets: model.manyToMany(() => AttributeSet, { mappedBy: 'attributes' }),
 }).cascades({
-    delete: ['values']
+    delete: ['values', 'possible_values']
 })
 
 export default Attribute
