@@ -31,17 +31,20 @@ All the progress is recorded in CHANGELOG.md and so far, it is solely focused on
   npm install @nicogorga/medusa-product-attributes
   ```
 
-2\. In `medusa-config.ts` add the following at the end of the `plugins` array in your project config object:
+2\. In `medusa-config.ts` add the following to the `plugins` array in your project config:
 
   ```js
-  projectConfig: {
-    plugins = [
-    // ...
-    {
-      resolve: `@nicogorga/medusa-product-attributes`,
-    },
-  ]
-  }
+    module.exports = defineConfig({
+      projectConfig: {
+        // ...
+      },
+      plugins: [
+        {
+          resolve: `@nicogorga/medusa-product-attributes`,
+          options: {}
+        }
+      ]
+    })
   ```
 
 3\. In your already existent or new createProductsWorkflow.productsCreated hook handler, import `productsCreatedHookHandler` and call it like following. This is important as it's what links new products to the requested attribute values (if any):
