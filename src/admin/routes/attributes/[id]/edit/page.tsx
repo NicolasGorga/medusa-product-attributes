@@ -1,5 +1,5 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk";
-import { FocusModal, Heading, Button, toast } from "@medusajs/ui";
+import { FocusModal, Heading, Button, toast, ProgressTabs } from "@medusajs/ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { medusaClient } from "../../../../lib/config";
 import { useEffect, useState } from "react";
@@ -10,20 +10,31 @@ import {
 } from "../../components/AttributeForm";
 import { z } from "zod";
 import {
+  attributeQueryKeys,
   useAttribute,
   useUpdateAttribute,
 } from "../../../../hooks/api/attributes";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditAttributePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
+  const [activeTab, setActiveTab] = useState<"details" | "type">("details");
+  const [tabStatuses, setTabStatuses] = useState<{
+    detailsStatus: "not-started" | "in-progress" | "completed";
+    typeStatus: "not-started" | "in-progress" | "completed";
+  }>({
+    detailsStatus: "completed", // Edit mode starts with completed status
+    typeStatus: "completed",    // Edit mode starts with completed status
+  });
+  const queryClient = useQueryClient();
 
   const { attribute, isLoading } = useAttribute(
     id ?? "",
     {
       fields:
-        "name, description, handle, is_variant_defining, is_filterable, ui_component, product_categories.name, possible_values.*",
+        "name,description,handle,is_variant_defining,is_filterable,ui_component,product_categories.name,possible_values.*",
     },
     { enabled: !!id }
   );
@@ -45,9 +56,10 @@ const EditAttributePage = () => {
   const handleSave = async (
     data: z.infer<typeof CreateAttributeFormSchema>
   ) => {
-    const { is_global, ...payload } = data;
+    const { ...payload } = data;
     await mutateAsync(payload, {
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: attributeQueryKeys.lists() });
         toast.success("Attribute updated!");
         navigate(-1);
       },
@@ -62,11 +74,7 @@ const EditAttributePage = () => {
     navigate(-1);
   };
 
-  if (isLoading) {
-    return null;
-  }
-
-  if (!attribute) {
+  if (isLoading || !attribute) {
     return null;
   }
 
@@ -78,19 +86,33 @@ const EditAttributePage = () => {
       }}
     >
       <FocusModal.Content>
-        <FocusModal.Header>
-          <Heading>Edit Attribute</Heading>
-        </FocusModal.Header>
-        <FocusModal.Body className="flex flex-col items-center py-16">
-          <div>
-            <AttributeForm
-              initialData={attribute}
-              //@ts-expect-error correct data type will be received here
-              onSubmit={handleSave}
-              categories={categories}
-            />
-          </div>
-        </FocusModal.Body>
+        <ProgressTabs value={activeTab} onValueChange={(value) => setActiveTab(value as "details" | "type")} className="w-full h-full">
+          <FocusModal.Header className="flex items-center justify-between w-full py-0 h-fit">
+            <div className="w-full border-l h-full">
+              <ProgressTabs.List className="justify-start flex w-full items-center">
+                <ProgressTabs.Trigger value="details" status={tabStatuses.detailsStatus}>
+                  Details
+                </ProgressTabs.Trigger>
+                <ProgressTabs.Trigger value="type" status={tabStatuses.typeStatus}>
+                  Type
+                </ProgressTabs.Trigger>
+              </ProgressTabs.List>
+            </div>
+          </FocusModal.Header>
+          <FocusModal.Body className="flex flex-col items-center py-16">
+            <div>
+              <AttributeForm
+                initialData={attribute}
+                //@ts-expect-error correct data type will be received here
+                onSubmit={handleSave}
+                onCancel={handleClose}
+                categories={categories}
+                activeTab={activeTab}
+                onFormStateChange={setTabStatuses}
+              />
+            </div>
+          </FocusModal.Body>
+        </ProgressTabs>
         <FocusModal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Cancel
