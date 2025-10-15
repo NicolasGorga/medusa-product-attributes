@@ -8,7 +8,7 @@ import {
   Button,
   Badge,
 } from "@medusajs/ui";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { medusaClient } from "../../../lib/config";
 import { Attribute } from "../../../../types/attribute/http/attribute";
@@ -16,14 +16,16 @@ import { EllipsisHorizontal } from "@medusajs/icons";
 import { SectionRow } from "../../../components/section-row";
 import { PossibleValuesTable } from "../components/possible-values-table";
 import { SingleColumnLayout } from "../../../layouts/single-column";
-import { useAttribute } from "../../../hooks/api/attributes";
+import { attributeQueryKeys, useAttribute } from "../../../hooks/api/attributes";
 
 const AttributeDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient()
+
   const { attribute, isLoading } = useAttribute(id ?? "", {
-    fields: 'name, description, handle, product_categories.name, possible_values.*'
+    fields: 'name, description, handle, product_categories.name, possible_values.*, is_filterable, ui_component'
   }, { enabled: !!id })
 
   if (isLoading) {
@@ -56,6 +58,7 @@ const AttributeDetailPage = () => {
         method: "DELETE",
       });
       toast.success("Attribute deleted!");
+	  queryClient.invalidateQueries({ queryKey: attributeQueryKeys.list() });
       navigate("/attributes");
     } catch (error) {
       toast.error((error as Error).message);
@@ -88,6 +91,8 @@ const AttributeDetailPage = () => {
 
         <SectionRow title="Description" value={attribute.description} />
         <SectionRow title="Handle" value={attribute.handle} />
+		<SectionRow title="UI Component" value={attribute.ui_component} />
+		<SectionRow title="Filterable" value={attribute.is_filterable ? "True" : "False"} />
         <SectionRow
           title="Global"
           value={!attribute.product_categories?.length ? "True" : "False"}

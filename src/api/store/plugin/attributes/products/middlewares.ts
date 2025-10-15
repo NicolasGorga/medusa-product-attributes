@@ -1,11 +1,18 @@
-import { applyDefaultFilters, authenticate, clearFiltersByKey, featureFlagRouter, maybeApplyLinkFilter, MiddlewareRoute, validateAndTransformQuery } from "@medusajs/framework";
-import { ProductStatus, isPresent } from "@medusajs/framework/utils";
+import { applyDefaultFilters, authenticate, clearFiltersByKey, maybeApplyLinkFilter, MiddlewareRoute, validateAndTransformQuery } from "@medusajs/framework";
+import { FeatureFlag, ProductStatus, isPresent } from "@medusajs/framework/utils";
 import { StoreGetProductsParams } from "@medusajs/medusa/api/store/products/validators";
 import { filterByValidSalesChannels, normalizeDataForContext, setPricingContext, setTaxContext } from "@medusajs/medusa/api/utils/middlewares/index";
-import IndexEngineFeatureFlag from "@medusajs/medusa/loaders/feature-flags/index-engine";
 import * as OriginalQueryConfig from "@medusajs/medusa/api/store/products/query-config"
 import { ExtendedStoreGetProductsParams } from "./validators";
 import attributeValueProduct from "../../../../../links/attribute-value-product";
+
+// TODO: Remove once https://github.com/medusajs/medusa/pull/13714 is merged and import instead
+const IndexEngineFeatureFlag = {
+  key: "index_engine",
+  default_val: false,
+  env_key: "MEDUSA_FF_INDEX_ENGINE",
+  description: "Enable Medusa to use the index engine in some part of the core",
+};
 
 export const storeAttributesProductsMiddlewares: MiddlewareRoute[] = [
     {
@@ -21,7 +28,14 @@ export const storeAttributesProductsMiddlewares: MiddlewareRoute[] = [
           ),
           filterByValidSalesChannels(),
           (req, res, next) => {
-            if (featureFlagRouter.isFeatureEnabled(IndexEngineFeatureFlag.key)) {
+            const canUseIndex = !(
+              isPresent(req.filterableFields.tags) ||
+              isPresent(req.filterableFields.categories)
+            )
+            if (
+              FeatureFlag.isFeatureEnabled(IndexEngineFeatureFlag.key) &&
+              canUseIndex
+            ) {
               return next()
             }
     
