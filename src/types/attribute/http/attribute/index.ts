@@ -11,6 +11,8 @@ export interface Attribute {
   ui_component: AttributeUIComponent
   metadata: Record<string, unknown> | null
   possible_values?: AttributePossibleValue[]
+  created_at: string
+  updated_at: string
   values?: Array<{
     id: string
     value: string
