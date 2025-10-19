@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added 
 - Improved attributes list and detail page UI, allowing to update certain fields directly from the list page, more information in detail page
 
+### Fixed 
+- Build error in attributes products route
+
 ## 2.1.1 - 2025-06-13
 ### Added
 - Updated Medusa from 2.6.1 to 2.7.0
