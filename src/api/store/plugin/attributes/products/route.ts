@@ -14,7 +14,7 @@ export const GET = async (
   req: RequestWithContext<ExtendedStoreGetProductsParamsType>,
   res: MedusaResponse<HttpTypes.StoreProductListResponse>
 ) => {
-  return await getProducts(req, res);
+  return await getProducts(req as any, res);
 };
 
 async function getProducts(
